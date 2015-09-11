@@ -1,0 +1,17 @@
+Description: ssl.PROTOCOL_SSLv23 is removed from Debian
+Author: Thomas Goirand <zigo@debian.org>
+Forwarded: not-needed
+Last-Update: 2014-01-15
+
+--- a/murano/openstack/common/sslutils.py
++++ b/murano/openstack/common/sslutils.py
+@@ -83,8 +83,7 @@
+ 
+ _SSL_PROTOCOLS = {
+     "tlsv1": ssl.PROTOCOL_TLSv1,
+-    "sslv23": ssl.PROTOCOL_SSLv23,
+-    "sslv3": ssl.PROTOCOL_SSLv3
++    "sslv23": ssl.PROTOCOL_SSLv23
+ }
+ 
+ try:

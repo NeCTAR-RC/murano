@@ -1,0 +1,106 @@
+murano (2015.1.0-8build1) wily; urgency=medium
+
+  * No change rebuild with SQLAlchemy 1.0.6.
+
+ -- James Page <james.page@ubuntu.com>  Fri, 24 Jul 2015 09:47:40 +0100
+
+murano (2015.1.0-8) unstable; urgency=medium
+
+  * Allow running with SQLA 1.0.6:
+    - Rebuilt with new depends (Closes: #790644).
+    - Fixes requirements.txt.
+
+ -- Thomas Goirand <zigo@debian.org>  Wed, 01 Jul 2015 02:53:54 +0000
+
+murano (2015.1.0-7) unstable; urgency=medium
+
+  * Removes python-lockfile dependency (Closes: #789888).
+
+ -- Thomas Goirand <zigo@debian.org>  Fri, 26 Jun 2015 15:37:29 +0200
+
+murano (2015.1.0-6) unstable; urgency=medium
+
+  * Added French debconf translation thanks to Julien Patriarca
+    <leatherface@debian.org> (Closes: #789033).
+
+ -- Thomas Goirand <zigo@debian.org>  Wed, 17 Jun 2015 14:50:46 +0200
+
+murano (2015.1.0-5) unstable; urgency=medium
+
+  * Also purges /var/cache/murano (Closes: #788832).
+
+ -- Thomas Goirand <zigo@debian.org>  Mon, 15 Jun 2015 15:32:10 +0200
+
+murano (2015.1.0-4) unstable; urgency=medium
+
+  * Make murano build reproduceable (Closes: #788396). Thanks to Juan Picca
+    <jumapico@gmail.com> for the bug report and patch.
+
+ -- Thomas Goirand <zigo@debian.org>  Thu, 11 Jun 2015 19:28:37 +0200
+
+murano (2015.1.0-3) unstable; urgency=medium
+
+  * Added fr.po debconf translation (Closes: #785227).
+
+ -- Thomas Goirand <zigo@debian.org>  Thu, 11 Jun 2015 10:36:41 +0200
+
+murano (2015.1.0-2) unstable; urgency=medium
+
+  * Added pt.po debconf translation (Closes: #784594).
+  * Added the creation of /var/cache/murano/meta in postinst.
+
+ -- Thomas Goirand <zigo@debian.org>  Tue, 12 May 2015 23:19:21 +0200
+
+murano (2015.1.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Updated (build-)depends for this release.
+
+ -- Thomas Goirand <zigo@debian.org>  Thu, 30 Apr 2015 22:10:22 +0000
+
+murano (2015.1~rc1-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Uploading to unstable.
+  * Reviewed (build-)depends for this release.
+  * Rebased the "disable-failing-tests.patch" which didn't apply anymore.
+  * Now generating the .conf file using oslo-config-generator.
+
+ -- Thomas Goirand <zigo@debian.org>  Fri, 02 Jan 2015 17:50:42 +0100
+
+murano (2014.2-3) experimental; urgency=medium
+
+  * Added ordereddict to pydist-overrides.
+
+ -- Thomas Goirand <zigo@debian.org>  Sat, 27 Dec 2014 00:22:18 +0800
+
+murano (2014.2-2) experimental; urgency=medium
+
+  * murano-api and murano-engine now depends on murano-common.
+  * Fixed the service type for murano-api.
+
+ -- Thomas Goirand <zigo@debian.org>  Mon, 27 Oct 2014 21:14:37 +0800
+
+murano (2014.2-1) experimental; urgency=medium
+
+  * New upstream release.
+
+ -- Thomas Goirand <zigo@debian.org>  Mon, 27 Oct 2014 13:04:57 +0800
+
+murano (2014.2~rc1-1) experimental; urgency=medium
+
+  * New upstream release.
+  * Updated (build-)depends for this release.
+  * Now using templated init script for sysv-rc, generated systemd unit and
+    upstart jobs, using openstack-pkg-tools >= 13.
+  * Fixed double-declared (build-)depends on python-keystoneclient.
+  * Standards-Version is now 3.9.6 (no change).
+  * Added a watch file.
+
+ -- Thomas Goirand <zigo@debian.org>  Fri, 03 Oct 2014 14:05:24 +0800
+
+murano (2014.2~b3-1) experimental; urgency=low
+
+  * Initial release. (Closes: #762822)
+
+ -- Thomas Goirand <zigo@debian.org>  Thu, 25 Sep 2014 17:35:42 +0800

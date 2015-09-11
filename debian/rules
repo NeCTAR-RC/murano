@@ -1,0 +1,77 @@
+#!/usr/bin/make -f
+
+PYTHONS:=$(shell pyversions -vr)
+PYTHON3S:=$(shell py3versions -vr)
+
+UPSTREAM_GIT = git://github.com/stackforge/murano.git
+
+LAST_CHANGE=$(shell dpkg-parsechangelog -S Date)
+BUILD_DATE=$(shell LC_ALL=C date -u "+%B %d, %Y" -d "$(LAST_CHANGE)")
+SPHINXOPTS := -D html_last_updated_fmt="$(BUILD_DATE)"
+
+include /usr/share/openstack-pkg-tools/pkgos.make
+export OSLO_PACKAGE_VERSION=$(VERSION)
+
+%:
+	dh $@ --buildsystem=python_distutils --with python2,sphinxdoc,systemd
+
+override_dh_auto_test:
+ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
+	echo "===> Running tests"
+	set -e && for i in 2.7 ; do \
+		PYMAJOR=`echo $$i | cut -d'.' -f1` ; \
+		echo "===> Testing with python$$i (python$$PYMAJOR)" ; \
+		rm -rf .testrepository ; \
+		testr-python$$PYMAJOR init ; \
+		TEMP_REZ=`mktemp -t` && \
+		PYTHONPATH=$(CURDIR) PYTHON=python$$i DISCOVER_DIRECTORY=murano/tests/unit testr-python$$PYMAJOR run --subunit 'tests\.(?!.*SysLogHandlersTestCase.*)' | tee $$TEMP_REZ | subunit2pyunit ; \
+		cat $$TEMP_REZ | subunit-filter -s --no-passthrough | subunit-stats ; \
+		rm -f $$TEMP_REZ ; \
+		testr-python$$PYMAJOR slowest ; \
+	done
+endif
+
+override_dh_sphinxdoc:
+ifeq (,$(findstring nodocs, $(DEB_BUILD_OPTIONS)))
+	PYTHONPATH=. sphinx-build $(SPHINXOPTS) -b html doc/source $(CURDIR)/debian/murano-doc/usr/share/doc/murano-doc/html
+	dh_sphinxdoc -O--buildsystem=python_distutils
+endif
+
+override_dh_auto_build:
+	dh_auto_build
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-api.config
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-api.postinst
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-common.config
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-common.postinst
+
+override_dh_install:
+	dh_install -O--buildsystem=python_distutils --fail-missing
+	# Get the main config file to use decent defaults.
+	mkdir -p $(CURDIR)/debian/murano-common/usr/share/murano-common
+	oslo-config-generator --output-file $(CURDIR)/debian/murano-common/usr/share/murano-common/murano.conf \
+		--namespace keystonemiddleware.auth_token \
+		--namespace murano \
+		--namespace oslo.db \
+		--namespace oslo.messaging
+	sed -i 's|^[# \t]*notification_driver[ \t]*=.*|notification_driver=messagingv2|' $(CURDIR)/debian/murano-common/usr/share/murano-common/murano.conf
+	sed -i 's|#connection=<None>|connection=sqlite:///var/lib/murano/muranodb|' $(CURDIR)/debian/murano-common/usr/share/murano-common/murano.conf
+
+	# Install other configuration files in a more "normal" way
+	mkdir -p $(CURDIR)/debian/murano-common/etc/murano
+	cp $(CURDIR)/etc/murano/logging.conf.sample $(CURDIR)/debian/murano-common/etc/murano/logging.conf
+	cp $(CURDIR)/etc/murano/murano-paste.ini $(CURDIR)/etc/murano/policy.json $(CURDIR)/debian/murano-common/etc/murano
+
+	# Also install alembic_migration folder
+	set -e ; for pyvers in $(PYTHONS); do \
+		cp -rfv $(CURDIR)/murano/db/migration/alembic_migrations $(CURDIR)/debian/python-murano/usr/lib/python$$pyvers/dist-packages/murano/db/migration/ ; \
+	done
+
+override_dh_clean:
+	rm -rf 	build \
+	 	debian/murano-common.postinst \
+		debian/murano-common.config \
+		debian/murano-api.postinst \
+		debian/murano-api.config \
+		doc/build/man
+	rm -f debian/*.init debian/*.service debian/*.upstart
+	dh_clean -O--buildsystem=python_distutils

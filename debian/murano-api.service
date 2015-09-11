@@ -1,0 +1,18 @@
+[Unit]
+Description=OpenStack Murano API
+After=postgresql.service mysql.service keystone.service rabbitmq-server.service ntp.service 
+
+[Service]
+User=murano
+Group=murano
+WorkingDirectory=/var/lib/murano
+PermissionsStartOnly=true
+ExecStartPre=/bin/mkdir -p /var/lock/murano /var/log/murano /var/lib/murano
+ExecStartPre=/bin/chown murano:murano /var/lock/murano /var/log/murano /var/lib/murano
+ExecStart=/etc/init.d/murano-api systemd-start
+Restart=on-failure
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+
