@@ -39,7 +39,6 @@ endif
 override_dh_auto_build:
 	dh_auto_build
 	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-api.config
-	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-api.postinst
 	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-common.config
 	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-common.postinst
 
