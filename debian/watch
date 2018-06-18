@@ -1,0 +1,4 @@
+version=3
+opts="uversionmangle=s/\.0(b|rc)/~$1/" \
+ http://tarballs.openstack.org/murano/ murano-(5\.\d.*)\.tar\.gz
+
