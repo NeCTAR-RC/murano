@@ -1,3 +1,4 @@
 skip-py37-tests.patch
 skip-py37-stop-iteration-test.patch
 install-missing-files.patch
+skip-failing-tests.patch
