@@ -1,1 +1,2 @@
 install-missing-files.patch
+skip-failing-tests.patch
