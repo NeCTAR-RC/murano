@@ -153,6 +153,8 @@ Methods:
           user_data_format: $preparedUserData.format
           key_name: $.keyname
           metadata: $this.getMetadata($region)
+          networks:
+            - allocate_network: auto
 
       - If: len($.blockDevices) > 0
         Then:
