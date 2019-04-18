@@ -18,12 +18,12 @@ else
   echo "installing murano agent from pip"
   echo "binary not found in PATH: $PATH"
   pip install '%PIP_SOURCE%'
-fi
 
-muranoAgentConf='%MURANO_AGENT_CONF%'
-echo $muranoAgentConf | base64 -d > /etc/init/murano-agent.conf
-muranoAgentService='%MURANO_AGENT_SERVICE%'
-echo $muranoAgentService | base64 -d > /etc/systemd/system/murano-agent.service
-muranoAgent='%MURANO_AGENT%'
-echo $muranoAgent | base64 -d > /etc/init.d/murano-agent
-chmod +x /etc/init.d/murano-agent
+  muranoAgentConf='%MURANO_AGENT_CONF%'
+  echo $muranoAgentConf | base64 -d > /etc/init/murano-agent.conf
+  muranoAgentService='%MURANO_AGENT_SERVICE%'
+  echo $muranoAgentService | base64 -d > /etc/systemd/system/murano-agent.service
+  muranoAgent='%MURANO_AGENT%'
+  echo $muranoAgent | base64 -d > /etc/init.d/murano-agent
+  chmod +x /etc/init.d/murano-agent
+fi
