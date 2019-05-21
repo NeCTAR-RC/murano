@@ -1,0 +1,39 @@
+#!/bin/sh
+
+set -e
+
+PROJECT_NAME=murano
+PROJECT_CONF=/etc/${PROJECT_NAME}/${PROJECT_NAME}.conf
+
+#PKGOS-INCLUDE#
+
+if [ "$1" = "configure" ] || [ "$1" = "reconfigure" ] ; then
+	. /usr/share/debconf/confmodule
+	. /usr/share/dbconfig-common/dpkg/postinst
+
+	pkgos_var_user_group ${PROJECT_NAME}
+
+	mkdir -p /var/cache/murano/meta
+	chown ${PROJECT_NAME}:${PROJECT_NAME} /var/cache/murano/meta
+	chown ${PROJECT_NAME}:${PROJECT_NAME} /var/cache/murano
+
+	# Manage the configuration file
+	pkgos_write_new_conf ${PROJECT_NAME} ${PROJECT_NAME}.conf
+	pkgos_write_new_conf ${PROJECT_NAME} murano-cfapi.conf
+	pkgos_write_new_conf ${PROJECT_NAME} murano-cfapi-paste.ini
+	pkgos_write_new_conf ${PROJECT_NAME} policy.yaml
+	pkgos_write_new_conf ${PROJECT_NAME} murano-paste.ini
+	pkgos_write_new_conf ${PROJECT_NAME} logging.conf
+
+	pkgos_rabbit_write_conf ${PROJECT_CONF} oslo_messaging_rabbit ${PROJECT_NAME}
+	pkgos_write_admin_creds ${PROJECT_CONF} keystone_authtoken ${PROJECT_NAME}
+        db_get ${PROJECT_NAME}/configure_db
+	if [ "$RET" = "true" ]; then
+		pkgos_dbc_postinst ${PROJECT_CONF} database connection ${PROJECT_NAME} $@
+		su -s /bin/sh -c "murano-db-manage --config-file=/etc/murano/murano.conf upgrade" ${PROJECT_NAME}
+	fi
+fi
+
+#DEBHELPER#
+
+exit 0

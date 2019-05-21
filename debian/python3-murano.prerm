@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "remove" ] ; then
+	update-alternatives --remove murano-api /usr/bin/python3-murano-api
+	update-alternatives --remove murano-cfapi /usr/bin/python3-murano-cfapi
+	update-alternatives --remove murano-cfapi-db-manage /usr/bin/python3-murano-cfapi-db-manage
+	update-alternatives --remove murano-db-manage /usr/bin/python3-murano-db-manage
+	update-alternatives --remove murano-engine /usr/bin/python3-murano-engine
+	update-alternatives --remove murano-manage /usr/bin/python3-murano-manage
+	update-alternatives --remove murano-pkg-check /usr/bin/python3-murano-pkg-check
+	update-alternatives --remove murano-test-runner /usr/bin/python3-murano-test-runner
+	update-alternatives --remove murano-wsgi-api /usr/bin/python3-murano-wsgi-api
+fi
+
+#DEBHELPER#
+
+exit 0

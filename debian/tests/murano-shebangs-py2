@@ -1,0 +1,18 @@
+#!/bin/bash
+#---------------------
+# Testing /usr/bin/murano-* shebangs
+#---------------------
+set -e
+
+BINARIES=('murano-api' 'murano-cfapi' 'murano-cfapi-db-manage' 'murano-db-manage' \
+          'murano-engine' 'murano-manage' 'murano-test-runner' 'murano-wsgi-api')
+
+ret=0
+
+for binary in "${BINARIES[@]}"; do
+    if ! `dirname $0`/test-shebang.py $binary python2.7; then
+        ret=1
+    fi
+done
+
+exit $ret

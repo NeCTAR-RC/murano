@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "configure" ] ; then
+	update-alternatives --install /usr/bin/murano-api murano-api /usr/bin/python3-murano-api 200
+	update-alternatives --install /usr/bin/murano-cfapi murano-cfapi /usr/bin/python3-murano-cfapi 200
+	update-alternatives --install /usr/bin/murano-cfapi-db-manage murano-cfapi-db-manage /usr/bin/python3-murano-cfapi-db-manage 200
+	update-alternatives --install /usr/bin/murano-db-manage murano-db-manage /usr/bin/python3-murano-db-manage 200
+	update-alternatives --install /usr/bin/murano-engine murano-engine /usr/bin/python3-murano-engine 200
+	update-alternatives --install /usr/bin/murano-manage murano-manage /usr/bin/python3-murano-manage 200
+	update-alternatives --install /usr/bin/murano-pkg-check murano-pkg-check /usr/bin/python3-murano-pkg-check 200
+	update-alternatives --install /usr/bin/murano-test-runner murano-test-runner /usr/bin/python3-murano-test-runner 200
+	update-alternatives --install /usr/bin/murano-wsgi-api murano-wsgi-api /usr/bin/python3-murano-wsgi-api 200
+fi
+
+#DEBHELPER#
+
+exit 0

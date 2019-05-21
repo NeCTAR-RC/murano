@@ -1,0 +1,9 @@
+Tests: murano-daemons, murano-shebangs-py3
+Depends: python3-murano, murano-common, murano-api,
+ murano-engine, murano-cfapi
+Restrictions: needs-root
+
+Tests: murano-daemons, murano-shebangs-py2
+Depends: murano-common, murano-api,
+ murano-engine, murano-cfapi
+Restrictions: needs-root
