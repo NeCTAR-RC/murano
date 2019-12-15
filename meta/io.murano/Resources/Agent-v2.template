@@ -1,7 +1,8 @@
 [DEFAULT]
-debug=True
-verbose=True
-log_file = /var/log/murano-agent.log
+debug = True
+verbose = True
+log_file = /dev/null
+use_stderr = True
 
 storage=/var/murano/plans
 
