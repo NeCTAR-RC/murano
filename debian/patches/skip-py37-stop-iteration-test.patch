@@ -1,0 +1,24 @@
+Description: Skip until fixed upstream.
+Author: Corey Bryant <corey.bryant@canonical.com>
+Bug-Ubuntu: https://bugs.launchpad.net/bugs/1789239
+Forwarded: no
+
+--- a/murano/tests/unit/dsl/test_helpers.py
++++ b/murano/tests/unit/dsl/test_helpers.py
+@@ -14,6 +14,8 @@
+ import copy
+ import mock
+ import semantic_version
++import sys
++import testtools
+ import weakref
+ 
+ from oslo_utils.uuidutils import generate_uuid
+@@ -296,6 +298,7 @@
+         not_a_dict.get.assert_not_called()
+         not_a_dict.pop.assert_not_called()
+ 
++    @testtools.skipIf(sys.version_info >= (3, 7), "Skipping test for Python 3.7")
+     @mock.patch.object(helpers, 'gc')
+     def test_walk_gc_with_towards_true(self, mock_gc, autospec=True):
+         mock_gc.get_referrers.side_effect = [

@@ -1,0 +1,103 @@
+#!/usr/bin/make -f
+
+LAST_CHANGE=$(shell dpkg-parsechangelog  | grep Date: | cut -d' ' -f2)
+BUILD_DATE=$(shell LC_ALL=C date -u "+%B %d, %Y" -d "$(LAST_CHANGE)")
+SPHINXOPTS := -D html_last_updated_fmt="$(BUILD_DATE)"
+
+include /usr/share/openstack-pkg-tools/pkgos.make
+
+%:
+	dh $@ --buildsystem=python_distutils --with python3,sphinxdoc,systemd
+
+override_dh_clean:
+	rm -rf 	build \
+	 	debian/murano-common.postinst \
+		debian/murano-common.config \
+		debian/murano-api.postinst \
+		debian/murano-api.config \
+		debian/murano-common.postrm \
+		doc/build/man
+	rm -f debian/*.init debian/*.service debian/*.upstart
+	dh_clean
+	rm -rf debian/*.templates debian/po
+
+override_dh_auto_clean:
+	python3 setup.py clean
+
+override_dh_auto_build:
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-api.config
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-api.postinst
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-common.config
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_func murano-common.postinst
+	/usr/share/openstack-pkg-tools/pkgos_insert_include pkgos_postrm murano-common.postrm
+	pkgos-merge-templates murano-api murano endpoint
+	pkgos-merge-templates murano-common murano db rabbit ksat
+
+override_dh_auto_install:
+	echo "Do nothing..."
+
+override_dh_auto_test:
+	echo "Do nothing..."
+
+override_dh_install:
+	pkgos-dh_auto_install --no-py2
+	rm -rf $(CURDIR)/debian/python*-murano/usr/etc
+
+ifeq (,$(findstring nocheck, $(DEB_BUILD_OPTIONS)))
+	DISCOVER_DIRECTORY=$(CURDIR)/murano/tests/unit pkgos-dh_auto_test --no-py2 'tests\.unit\.(?!(.*SysLogHandlersTestCase.*|.*packages\.hot_package\.test_hot_package\.TestHotPackage\.test_heat_files_generated.*))'
+endif
+
+	# Get the main config file to use decent defaults.
+	mkdir -p $(CURDIR)/debian/murano-common/usr/share/murano-common
+	PYTHONPATH=$(CURDIR)/debian/python3-murano/usr/lib/python3/dist-packages python3-oslo-config-generator \
+		--output-file $(CURDIR)/debian/murano-common/usr/share/murano-common/murano.conf \
+		--wrap-width 140 \
+		--namespace keystone_authtoken \
+		--namespace murano \
+		--namespace oslo.db \
+		--namespace oslo.log \
+		--namespace oslo.messaging \
+		--namespace oslo.middleware.cors \
+		--namespace oslo.policy \
+		--namespace oslo.service.service \
+		--namespace castellan.config
+	pkgos-readd-keystone-authtoken-missing-options $(CURDIR)/debian/murano-common/usr/share/murano-common/murano.conf keystone_authtoken murano
+
+	sed -i 's|^[# \t]*notification_driver[ \t]*=.*|notification_driver=messagingv2|' $(CURDIR)/debian/murano-common/usr/share/murano-common/murano.conf
+	sed -i 's|#connection=<None>|connection=sqlite:///var/lib/murano/muranodb|' $(CURDIR)/debian/murano-common/usr/share/murano-common/murano.conf
+
+	PYTHONPATH=$(CURDIR)/debian/python3-murano/usr/lib/python3/dist-packages python3-oslo-config-generator \
+		--output-file $(CURDIR)/debian/murano-common/usr/share/murano-common/murano-cfapi.conf \
+		--wrap-width 140 \
+		--namespace keystone_authtoken \
+		--namespace murano.cfapi \
+		--namespace oslo.db \
+		--namespace oslo.log
+
+	PYTHONPATH=$(CURDIR)/debian/python3-murano/usr/lib/python3/dist-packages python3-oslopolicy-sample-generator \
+		--output-file $(CURDIR)/debian/murano-common/usr/share/murano-common/policy.yaml \
+		--namespace murano
+
+	dh_install
+	dh_missing --fail-missing
+
+	# Install config files
+	for i in murano-cfapi-paste.ini murano-paste.ini ; do \
+		cp $(CURDIR)/etc/murano/$$i $(CURDIR)/debian/murano-common/usr/share/murano-common ; \
+	done
+	cp $(CURDIR)/etc/murano/logging.conf.sample $(CURDIR)/debian/murano-common/usr/share/murano-common/logging.conf
+
+	# Zip the murano core-library and push it in the package.
+	# Note that this is done in a reproducible way, adjusting timestamps
+	# before zipping the files.
+	find meta/io.murano -newermt '$(BUILD_DATE)' -print0 | xargs -0r touch --no-dereference --date='$(BUILD_DATE)'
+	cd meta/io.murano ; TZ=UTC zip -r ../../debian/murano-common/usr/share/murano-common/io.murano.zip * ; cd ../..
+
+override_dh_sphinxdoc:
+ifeq (,$(findstring nodocs, $(DEB_BUILD_OPTIONS)))
+	PYTHONPATH=. sphinx-build $(SPHINXOPTS) -b html doc/source $(CURDIR)/debian/murano-doc/usr/share/doc/murano-doc/html
+	dh_sphinxdoc -O--buildsystem=python_distutils
+endif
+
+override_dh_python3:
+	dh_python3 --shebang=/usr/bin/python3
