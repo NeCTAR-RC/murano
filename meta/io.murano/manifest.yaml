@@ -55,6 +55,7 @@ Classes:
   io.murano.resources.NeutronNetwork: resources/NeutronNetwork.yaml
   io.murano.resources.ExistingNeutronNetwork: resources/ExistingNeutronNetwork.yaml
   io.murano.resources.NovaNetwork: resources/NovaNetwork.yaml
+  io.murano.resources.NectarNetwork: resources/NectarNetwork.yaml
   io.murano.resources.Volume: resources/Volume.yaml
   io.murano.resources.CinderVolume: resources/CinderVolume.yaml
   io.murano.resources.ExistingCinderVolume: resources/ExistingCinderVolume.yaml
@@ -62,6 +63,7 @@ Classes:
   io.murano.resources.CinderVolumeSnapshot: resources/CinderVolumeSnapshot.yaml
   io.murano.resources.MetadataAware: resources/MetadataAware.yaml
   io.murano.resources.InstanceAffinityGroup: resources/InstanceAffinityGroup.yaml
+  io.murano.resources.RecordSet: resources/RecordSet.yaml
 
   io.murano.system.Agent: system/Agent.yaml
   io.murano.system.AgentListener: system/AgentListener.yaml
