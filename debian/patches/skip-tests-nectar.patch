@@ -1,0 +1,10 @@
+--- a/murano/tests/unit/api/cmd/test_test_runner.py	2020-09-29 23:55:17.909522954 +0000
++++ b/murano/tests/unit/api/cmd/test_test_runner.py	2020-09-29 23:57:04.257816150 +0000
+@@ -74,6 +74,7 @@
+         stderr = stderr.getvalue()
+         return (stdout, stderr)
+ 
++    @testtools.skip("Skipping for Nectar")
+     def test_help(self):
+         stdout, _ = self.shell('--help')
+         usage = """usage: murano-test-runner [-h] [--config-file CONFIG_FILE]
