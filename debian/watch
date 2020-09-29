@@ -1,0 +1,4 @@
+version=3
+opts="uversionmangle=s/\.0(b|rc)/~$1/" \
+ https://tarballs.opendev.org/openstack/murano/ murano-(9\.\d.*)\.tar\.gz
+

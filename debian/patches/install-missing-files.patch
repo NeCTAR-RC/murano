@@ -1,0 +1,10 @@
+Description: Installing missing files
+Author: Thomas Goirand <zigo@debian.org>
+Forwarded: not-needed
+Last-Update: 2018-02-22
+
+--- /dev/null	2017-10-16 21:43:57.398818308 +0000
++++ b/MANIFEST.in	2018-02-22 15:01:49.419893878 +0000
+@@ -0,0 +1,2 @@
++recursive-include murano *
++recursive-include murano_tempest_tests *

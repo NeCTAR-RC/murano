@@ -1,0 +1,4 @@
+Tests: murano-daemons
+Depends: murano-common, murano-api,
+ murano-engine, murano-cfapi
+Restrictions: needs-root
