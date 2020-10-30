@@ -5,15 +5,15 @@ Forwarded: no
 
 --- a/murano/tests/unit/dsl/test_helpers.py
 +++ b/murano/tests/unit/dsl/test_helpers.py
-@@ -14,6 +14,7 @@
- import copy
+@@ -15,6 +15,7 @@ import copy
  import semantic_version
+ import types
  from unittest import mock
 +import testtools
  import weakref
  
  from oslo_utils.uuidutils import generate_uuid
-@@ -381,6 +382,7 @@ class TestParseVersionSpec(base.MuranoTe
+@@ -394,6 +395,7 @@ class TestParseVersionSpec(base.MuranoTestCase):
      def check(self, expected, version_spec):
          self.assertEqual(expected, helpers.parse_version_spec(version_spec))
  
@@ -21,7 +21,7 @@ Forwarded: no
      def test_empty_version_spec(self):
          version_spec = ""
          expected = semantic_version.Spec('>=0.0.0', '<1.0.0')
-@@ -401,6 +403,7 @@ class TestParseVersionSpec(base.MuranoTe
+@@ -414,6 +416,7 @@ class TestParseVersionSpec(base.MuranoTestCase):
          expected = semantic_version.Spec('>=2.1.0')
          self.check(expected, version_spec)
  
@@ -29,7 +29,7 @@ Forwarded: no
      def test_remove_spaces(self):
          version_spec = "< =  2 .1"
          expected = semantic_version.Spec('<2.2.0')
-@@ -411,6 +414,7 @@ class TestParseVersionSpec(base.MuranoTe
+@@ -424,6 +427,7 @@ class TestParseVersionSpec(base.MuranoTestCase):
          expected = semantic_version.Spec('==1.11.111')
          self.check(expected, version_spec)
  
@@ -37,6 +37,8 @@ Forwarded: no
      def test_input_spec(self):
          version_spec = semantic_version.Spec('<=1', '<=1.11')
          expected = semantic_version.Spec('<1.12.0', '<2.0.0')
+diff --git a/murano/tests/unit/dsl/test_versioning.py b/murano/tests/unit/dsl/test_versioning.py
+index 65195a1c..d6aab908 100644
 --- a/murano/tests/unit/dsl/test_versioning.py
 +++ b/murano/tests/unit/dsl/test_versioning.py
 @@ -15,6 +15,7 @@
@@ -47,7 +49,7 @@ Forwarded: no
  
  from murano.tests.unit.dsl.foundation import object_model as om
  from murano.tests.unit.dsl.foundation import test_case
-@@ -30,6 +31,7 @@ class TestVersioning(test_case.DslTestCa
+@@ -30,6 +31,7 @@ class TestVersioning(test_case.DslTestCase):
          self.new_runner(model)
          m.assert_called_once_with('Empty', sem_version)
  
@@ -55,7 +57,7 @@ Forwarded: no
      def test_empty_provided_version(self):
          version = ''
          sem_version = semantic_version.Spec('>=0.0.0', '<1.0.0')
-@@ -39,6 +41,7 @@ class TestVersioning(test_case.DslTestCa
+@@ -39,6 +41,7 @@ class TestVersioning(test_case.DslTestCase):
          self.new_runner(model)
          m.assert_called_once_with('Empty', sem_version)
  
